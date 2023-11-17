@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     LoginManager,
@@ -50,12 +50,6 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-@app.route("/")
-@login_required
-def home():
-    return render_template("base.html")
-
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
@@ -94,17 +88,46 @@ def input():
         record = Record(user_id=current_user.id, count=form.count.data)
         db.session.add(record)
         db.session.commit()
-        return redirect(url_for("view"))
+        return redirect(url_for("home"))
     return render_template("input.html", form=form)
 
 
-@app.route("/view")
+@app.route("/")
 @login_required
-def view():
-    records = Record.query.filter_by(user_id=current_user.id).all()
+def home():
+    user_id = request.args.get("user_id")
+    if user_id:
+        user = User.query.filter_by(id=user_id).first()
+        records = Record.query.filter_by(user_id=user.id).all()
+    else:
+        records = Record.query.filter_by(user_id=current_user.id).all()
     labels = [record.date.strftime("%Y/%m/%d %H:%M") for record in records]
     data = [str(record.count) for record in records]
-    return render_template("view.html", records=records, n=len(records), labels=labels, data=data)
+    return render_template("index.html", records=records, n=len(records), labels=labels, data=data, user=User.query.get(user_id))
+
+
+@app.route("/usage")
+def usage():
+    return render_template("usage.html")
+
+
+@app.route("/ranking")
+def ranking():
+    user_counts = (
+        db.session.query(Record.user_id, db.func.sum(Record.count)).group_by(Record.user_id).all()
+    )
+    sorted_counts = sorted(user_counts, key=lambda x: x[1], reverse=True)
+
+    # ユーザーのRecordが存在しない場合は、本数を0としてランキングに追加する
+    user_ids = [user_id for user_id, _ in sorted_counts]
+    users_without_records = User.query.filter(User.id.notin_(user_ids)).all()
+    for user in users_without_records:
+        sorted_counts.append((user.id, 0))
+    ranked_counts = [
+        (rank, user_id, count) for rank, (user_id, count) in enumerate(sorted_counts, start=1)
+    ]
+
+    return render_template("ranking.html", ranked_counts=ranked_counts, User=User)
 
 
 if __name__ == "__main__":

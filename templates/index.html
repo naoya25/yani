@@ -1,16 +1,20 @@
 {% extends "base.html" %} {% block content %}
-<h2>タバコの本数</h2>
+<h2>タバコの本数: {{user.username}}</h2>
 <table>
   <tr>
     <th>日付</th>
     <th>本数</th>
   </tr>
-  {% for i in range(n) %}
+  {% if records %} {% for i in range(n) %}
   <tr>
     <td>{{ labels[i] }}</td>
     <td>{{ data[i] }}</td>
   </tr>
-  {% endfor %}
+  {% endfor %} {% else %}
+  <tr>
+    <td colspan="2">No Data</td>
+  </tr>
+  {% endif %}
 </table>
 <div>
   <canvas id="myChart"></canvas>
