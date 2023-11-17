@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>タバコ管理アプリ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    <header>
+        <h1>タバコ管理アプリ</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('input') }}">タバコの本数を入力</a></li>
+                <li><a href="{{ url_for('view') }}">タバコの本数を見る</a></li>
+                <li><a href="{{ url_for('logout') }}">ログアウト</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
