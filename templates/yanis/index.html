@@ -1,0 +1,27 @@
+{% extends "base.html" %} {% block content %}
+<h2>タバコの本数: {{usr}}</h2>
+<table>
+  <tr>
+    <th>日付</th>
+    <th>本数</th>
+  </tr>
+  {% if records %} {% for i in range(n) %}
+  <tr>
+    <td>{{ labels[i] }}</td>
+    <td>{{ data[i] }}</td>
+  </tr>
+  {% endfor %} {% else %}
+  <tr>
+    <td colspan="2">No Data</td>
+  </tr>
+  {% endif %}
+</table>
+<div>
+  <canvas id="myChart"></canvas>
+</div>
+<input type="hidden" id="labels" name="labels" value="{{ ','.join(labels) }}" />
+<input type="hidden" id="data" name="data" value="{{ ','.join(data) }}" />
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="text/javascript" src="static/js/graph.js"></script>
+{% endblock %}

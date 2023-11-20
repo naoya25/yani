@@ -14,14 +14,8 @@
       <h1>タバコ管理アプリ</h1>
       <nav>
         <ul>
-          <li><a href="{{ url_for('input') }}">タバコの本数を入力</a></li>
-          <li><a href="{{ url_for('home') }}">タバコの本数を見る</a></li>
           <li><a href="{{ url_for('logout') }}">ログアウト</a></li>
-          <li><a href="{{ url_for('usage') }}">使い方</a></li>
-          <li><a href="{{ url_for('ranking') }}">ヤニランキング</a></li>
-          {% if current_user.username %}
-          <li>ログイン中: {{ current_user.username }}</li>
-          {%endif%}
+          <li>ログイン中: {{ usr }}</li>
         </ul>
       </nav>
     </header>
